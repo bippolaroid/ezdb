@@ -4,6 +4,36 @@
 
 body {
     margin: 0 auto;
+    color: white;
+    font-family: monospace;
+}
+
+label {
+    font-size: 1.25rem;
+    text-transform: capitalize;
+}
+
+input {
+    padding: 0.5rem 1rem;
+    width: 100%;
+    font-size: 1rem;
+    background-color: transparent;
+    color: #888888;
+    border: none;
+    outline-width: 1px;
+    outline-color: #484848;
+    outline-style: solid;
+    transition: all 150ms ease-out;
+}
+
+input:hover {
+    outline-color: #888888;
+    color: white;
+}
+
+input:focus {
+    outline-color: white;
+    color: white;
 }
 
 #main {
@@ -58,6 +88,16 @@ body {
 .file-wrapper {
     border-width: 1px;
     border-style: solid;
-    border-color: white;
+    border-color: #181818;
     width: 100%;
+    padding: 3rem;
+}
+
+.kv-wrapper {
+    display: flex;
+    gap: 12px;
+    padding: 1rem 2rem;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
 }
