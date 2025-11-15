@@ -2,6 +2,12 @@
     background-color: #030309;
 }
 
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0 auto;
     color: white;
@@ -20,6 +26,7 @@ input {
     background-color: transparent;
     color: #888888;
     border: none;
+    border-radius: 10px;
     outline-width: 1px;
     outline-color: #484848;
     outline-style: solid;
@@ -40,6 +47,7 @@ input:focus {
     display: flex;
     flex-direction: column;
     gap: 24px;
+    width: 100%;
     max-width: 1024px;
     margin: 0 auto;
 }
@@ -62,16 +70,14 @@ input:focus {
     background-color: transparent;
     border-width: 1px;
     border-style: solid;
+    border-radius: 10px;
     cursor: pointer;
-    font-size: 1.25rem;
-    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    padding: 0.5rem 0.7rem;
     transition: all 50ms ease-out;
     width: fit-content;
     height: fit-content;
-}
-
-.button:hover {
-    scale: 105%;
+    transition: all 150ms ease-out;
 }
 
 .primary-button {
@@ -80,9 +86,19 @@ input:focus {
     border-color: hsl(130, 100%, 50%);
 }
 
+.primary-button:hover {
+    background-color: transparent;
+    color: hsl(130, 100%, 50%);
+}
+
 .secondary-button {
     color: hsl(130, 0%, 80%);
     border-color: hsl(130, 0%, 80%);
+}
+
+.secondary-button:hover {
+    background-color: hsl(130, 0%, 80%);
+    color: hsl(130, 100%, 10%);
 }
 
 .file-wrapper {
@@ -99,5 +115,4 @@ input:focus {
     padding: 1rem 2rem;
     flex-direction: column;
     width: 100%;
-    box-sizing: border-box;
 }
