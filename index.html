@@ -1,21 +1,27 @@
 <html>
 
 <head>
-    <title>Japes - A JavaScript JSON Editor</title>
+    <title>Dashboard | ez⇄DB</title>
     <link href="/stylesheet.css" rel="stylesheet" />
 </head>
 
 <body>
-    <nav class="nav">
-        <div id="nav-buttons" class="group">
-            <button id="new-file" class="button primary-button">New</button>
-            <button id="open-file" class="button secondary-button">Open</button>
-        </div>
-        <div class="group">
-            <button class="button secondary-button">Docs</button>
+    <nav class="fixed">
+        <div id="nav">
+            <div id="nav-left">
+                <div id="logo"><a href="./">ez<span id="logo-mark">⇄</span>DB</a></div>
+                <div id="nav-buttons">
+                    <button id="new-file" class="primary-button">New File</button>
+                    <button id="open-file" class="secondary-button">Open File</button>
+                </div>
+            </div>
+            <div>
+                <button class="secondary-button">Docs</button>
+            </div>
         </div>
     </nav>
     <main id="main"></main>
+    <footer></footer>
 </body>
 <script type="module" src="/index.js"></script>
 
