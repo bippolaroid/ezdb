@@ -1,6 +1,7 @@
 <html>
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard | ez⇄DB</title>
     <link href="/stylesheet.css" rel="stylesheet" />
 </head>
@@ -9,7 +10,7 @@
     <nav class="fixed">
         <div id="nav">
             <div id="nav-left">
-                <div id="logo"><a href="./">ez<span id="logo-mark">⇄</span>DB</a></div>
+                <div id="logo"><a href="./"><span id="logo-mark">⇄</span></a></div>
                 <div id="nav-buttons">
                     <button id="new-file" class="primary-button">New File</button>
                     <button id="open-file" class="secondary-button">Open File</button>
@@ -20,7 +21,32 @@
             </div>
         </div>
     </nav>
-    <main id="main"></main>
+    <main id="main">
+        <section id="table-container" class="container">
+        <table>
+            <caption>
+                Quarterly Sales Comparison
+            </caption>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th scope="col">Region North</th>
+                    <th scope="col">Region South</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>15,000</td>
+                    <td>12,500</td>
+                </tr>
+                <tr>
+                    <td>8,000</td>
+                    <td>9,500</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+    </main>
     <footer></footer>
 </body>
 <script type="module" src="/index.js"></script>

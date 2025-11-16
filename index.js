@@ -3,6 +3,7 @@ import EntryInput from "./EntryInput.mjs";
 const settableTypes = ["string", "number"];
 
 const mainContainer = document.querySelector("#main");
+const tableContainer = document.querySelector("#table-container");
 const newFileButton = document.querySelector("#new-file");
 const openFileButton = document.querySelector("#open-file");
 
@@ -18,23 +19,41 @@ openFileButton?.addEventListener("click", () => {
         if (files && files.length > 0 && files[0].size > 0) {
             const file = files[0];
             const jsonFile = JSON.parse(await file.text());
+            /**
+             * @type {NestMap[]}
+             */
             const entriesMap = mapAllEntries(jsonFile);
 
-            for (const entryMap of entriesMap) {
-                const entryContainer = document.createElement("section");
-                entryContainer.classList = "entry-wrapper";
-                createTables(entryMap, entryContainer);
-                const saveEntryButton = document.createElement("button");
-                saveEntryButton.classList = "button secondary-button";
-                saveEntryButton.textContent = "Save Entry";
-                entryContainer.appendChild(saveEntryButton);
-                mainContainer?.appendChild(entryContainer);
+            const tableElement = document.createElement("table");
+            const tableCaption = document.createElement("caption");
+
+            tableCaption.textContent = file.name;
+
+            const tableBody = document.createElement("tbody");
+
+            for (const schemaKey of entriesMap[0]) {
+                const schemaKeyCell = document.createElement("th");
+                schemaKeyCell.scope = "col";
+                schemaKeyCell.textContent = schemaKey[0];
+                tableBody.appendChild(schemaKeyCell);
             }
+
+            tableElement.appendChild(tableCaption);
+
+            for (const entryMap of entriesMap) {
+                const entryRow = document.createElement("tr");
+                createCells(entryMap, entryRow);
+                tableBody.appendChild(entryRow);
+            }
+            tableElement.appendChild(tableBody);
+            if(tableContainer) tableContainer.innerHTML = "";
+            tableContainer?.appendChild(tableElement);
+
             const saveAllButton = document.createElement("button");
             saveAllButton.classList = "button primary-button";
             saveAllButton.textContent = "Save all entries";
             newFileButton?.parentElement?.appendChild(saveAllButton);
-            if (newFileButton && newFileButton instanceof HTMLButtonElement) newFileButton.disabled = true;
+            if (newFileButton instanceof HTMLButtonElement) newFileButton.disabled = true;
             newFileButton?.classList.add("disabled");
             openFileButton?.remove();
         }
@@ -70,56 +89,19 @@ function mapEntry(entry, map) {
 /**
  * 
  * @typedef {Map<string, Object | NestMap>} NestMap
- * @param {NestMap} valueSet 
- * @param {HTMLElement} container 
+ * @param {NestMap} entryMap 
+ * @param {HTMLElement} entryRow 
  */
-function createTables(valueSet, container) {
-    for (const valueSubset of valueSet) {
-        const valueSubsetWrapper = document.createElement("section");
-        valueSubsetWrapper.classList = "kv-wrapper";
+function createCells(entryMap, entryRow) {
+    for (const valueSet of entryMap) {
+        const valueField = valueSet[1];
+        const valueCell = document.createElement("td");
 
-        const labelWrapper = document.createElement("div");
-        labelWrapper.classList = "flex items-center gap-sm"
-
-        const keyLabel = document.createElement("label");
-
-        if (valueSubset[1] instanceof Map) {
-            if (Number(valueSubset[0]) || Number(valueSubset[0]) === 0) {
-                keyLabel.textContent = valueSubset[1].get("title").currentValue;
-            } else {
-                keyLabel.textContent = valueSubset[0];
-            }
-            labelWrapper.appendChild(keyLabel);
-            valueSubsetWrapper.appendChild(labelWrapper);
-            createTables(valueSubset[1], valueSubsetWrapper);
-            container.appendChild(valueSubsetWrapper);
-        } else if (valueSubset[1] instanceof Object) {
-            keyLabel.textContent = valueSubset[0];
-            labelWrapper.appendChild(keyLabel);
-            const keyValue = new EntryInput(valueSubset[0]);
-            keyValue.element.oninput = (event) => {
-                /**
-                 * @type {HTMLInputElement}
-                 */
-                let target;
-                if (event.target instanceof HTMLInputElement) {
-                    target = event.target;
-                    valueSubset[1].newValue = target?.value;
-                    if (valueSubset[1].newValue !== valueSubset[1].currentValue) {
-                        const alert = document.createElement("div");
-                        alert.classList = "basic-alert flex items-center";
-                        alert.textContent = "Modified"
-                        labelWrapper.appendChild(alert);
-                    }
-                }
-            }
-
-            keyValue.value = valueSubset[1].currentValue;
-
-            valueSubsetWrapper.appendChild(labelWrapper);
-            valueSubsetWrapper.appendChild(keyValue.element);
-
+        if (valueField instanceof Map) {
+            valueCell.textContent = "map";
+        } else if (valueField instanceof Object) {
+            valueCell.textContent = valueField.currentValue;
         }
-        container.appendChild(valueSubsetWrapper);
+        entryRow.appendChild(valueCell);
     }
 }

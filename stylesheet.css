@@ -1,15 +1,18 @@
 :root {
-    --color-1: hsl(200, 50%, 2%);
-    --color-1-50: hsl(200, 20%, 5%);
-    --color-1-60: hsl(200, 20%, 10%);
-    --color-1-75: hsl(200, 20%, 20%);
-    --color-1-90: hsl(200, 20%, 50%);
-    --color-1-100: hsl(200, 100%, 95%);
-    --color-2: hsl(135, 100%, 50%);
+    --color-1: hsl(190, 40%, 4%);
+    --color-1-50: hsl(190, 40%, 6%);
+    --color-1-60: hsl(190, 40%, 12%);
+    --color-1-75: hsl(190, 40%, 20%);
+    --color-1-90: hsl(190, 40%, 60%);
+    --color-1-100: hsl(190, 100%, 90%);
+    --color-2: hsl(145, 100%, 50%);
     --rounded-sm: 9px;
     --rounded-lg: 36px;
     --optical-padding: 0.35rem 0.65rem;
-    font-size: 16px;
+    --gap-sm: 6px;
+    --gap-md: 12px;
+    --gap-lg: 24px;
+    font-size: 18px;
 }
 
 *,
@@ -28,8 +31,8 @@ span {
 body {
     background-color: var(--color-1-50);
     margin: 0 auto;
-    font-family: monospace;
     max-height: 100dvh;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 a {
@@ -87,45 +90,98 @@ button {
     user-select: none;
 }
 
+caption {
+    background-color: var(--color-1-60);
+    text-align: left;
+    padding: 2rem 1rem;
+    font-size: 1.25rem;
+    color: var(--color-1-100);
+}
+
+table {
+    color: white;
+    background-color: var(--color-1);
+    width: 100%;
+    text-align: center;
+}
+
+th {
+    background-color: var(--color-1-50);
+    font-size: 0.75rem;
+    padding: 0.5rem 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--color-1-75);
+}
+
+td {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+    color: var(--color-1-100);
+}
+
 #main {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: var(--gap-lg);
     width: 100%;
-    max-width: 1024px;
     margin: 0 auto;
-    padding-top: 144px;
-    padding-bottom: 144px;
+    height: 100%;
+    max-height: 100dvh;
+    position: relative;
 }
 
 #logo {
-    font-size: 1.25rem;
+    font-size: 1rem;
     font-weight: bolder;
+    font-family: monospace;
     border-right: 1px solid #282828;
     padding-right: 1rem;
     margin-right: 1rem;
-}
-
-#logo a {
-    color: white;
 }
 
 #logo-mark {
     color: var(--color-2);
 }
 
-#logo:hover a {
-    color: var(--color-2);
+#logo-mark:hover {
+    color: white;
 }
 
-#logo:hover #logo-mark {
+#logo-mark::before {
+    content: "ez";
     color: white;
+    transition: all 150ms ease-out;
+}
+
+#logo-mark::after {
+    content: "DB";
+    color: white;
+    transition: all 150ms ease-out;
+
+}
+
+#logo-mark:hover::before,
+#logo-mark:hover::after {
+    color: var(--color-2);
 }
 
 #nav-left {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+#nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-sm);
+    z-index: 100;
+
+}
+
+nav {
+    z-index: 100;
 }
 
 #nav {
@@ -160,6 +216,14 @@ button {
     color: var(--color-1);
 }
 
+.container {
+    border: 1px solid var(--color-1-75);
+    margin: 4.65rem 1rem;
+    border-radius: var(--rounded-sm);
+    overflow: auto;
+    scrollbar-width: none;
+}
+
 .entry-wrapper {
     border-width: 1px;
     border-style: solid;
@@ -172,7 +236,7 @@ button {
 
 .kv-wrapper {
     display: flex;
-    gap: 12px;
+    gap: var(--gap-md);
     padding: 1rem 2rem;
     flex-direction: column;
     width: 100%;
@@ -187,7 +251,7 @@ button {
 }
 
 .gap-sm {
-    gap: 6px;
+    gap: var(--gap-sm);
 }
 
 .fixed {
