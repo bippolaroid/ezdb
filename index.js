@@ -4,9 +4,8 @@ const mainContainer = document.querySelector("#main");
 const tableContainer = document.querySelector("#table-container");
 const newFileButton = document.querySelector("#new-file");
 const openFileButton = document.querySelector("#open-file");
-/**
- * @type {HTMLDivElement}
- */
+const propertiesPanel = document.querySelector("#properties-panel");
+const propertyValue = document.querySelector("#property-value");
 const valueModal = document.querySelector("#value-modal");
 
 openFileButton?.addEventListener("click", () => {
@@ -111,6 +110,14 @@ function createCells(entryMap, entryRow) {
         valueCell.addEventListener("click", (e) => {
             e.stopPropagation();
             valueModal.style.display = "block";
+            propertyValue.value = valueField.currentValue;
+
+            propertyValue?.addEventListener("change", () => {
+                valueField.newValue = propertyValue.value;
+                entryMap.set(valueSet[0], valueField)
+                console.log(valueSet);
+            })
+
             /*
             valueModal.style.left = (valueCell.getBoundingClientRect().left - 1).toString();
             valueModal.style.top = (valueCell.getBoundingClientRect().bottom - 1).toString();
@@ -122,11 +129,13 @@ function createCells(entryMap, entryRow) {
              * @param {Event} e 
              */
             function externalClose(e) {
+                if(e.target instanceof HTMLElement && !e.target.closest("#properties-panel")) {
                 valueModal.style.display = "none";
                 e.target?.removeEventListener("click", externalClose);
+                }
             }
 
-            mainContainer?.addEventListener("click", externalClose)
+            window?.addEventListener("click", externalClose)
         })
 
         entryRow.appendChild(valueCell);
