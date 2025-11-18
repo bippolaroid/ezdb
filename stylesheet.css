@@ -103,10 +103,27 @@ table {
     background-color: var(--color-1);
     width: 100%;
     text-align: center;
+    border-collapse: collapse;
 }
 
-th {
+thead,
+tbody {
+    display: block;
+    user-select: none;
+}
+
+tbody {
+    overflow-x: auto;
+    max-width: 100dvw;
+    scrollbar-width: thin;
+    scroll-behavior: smooth;
+    padding-right: 2rem;
+}
+
+td.col-head {
     background-color: var(--color-1-50);
+    border-right: 1px solid var(--color-1-60);
+    border-bottom: 1px solid var(--color-1-60);
     font-size: 0.75rem;
     padding: 0.5rem 1rem;
     text-transform: uppercase;
@@ -114,16 +131,35 @@ th {
     color: var(--color-1-75);
 }
 
+th:last-child {
+    border-right: none;
+}
+
+tr:hover,
+td:hover,
+th:hover {
+    filter: brightness(150%);
+}
+
 td {
+    background-color: var(--color-1);
     padding: 0.5rem 1rem;
     font-size: 0.75rem;
     color: var(--color-1-100);
+    border: 1px solid var(--color-1-60);
+    white-space: nowrap;
+}
+
+th:first-child,
+td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
 }
 
 #main {
     display: flex;
-    flex-direction: column;
-    gap: var(--gap-lg);
+    flex-direction: row;
     width: 100%;
     margin: 0 auto;
     height: 100%;
@@ -131,11 +167,38 @@ td {
     position: relative;
 }
 
+#table-container {
+    max-width: 75dvw;
+}
+
+#properties-panel {
+    max-width: 25dvw;
+}
+
+#ui-overlay {
+    width: 100dvw;
+    height: 100dvh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    pointer-events: none;
+}
+
+#ui-overlay div {
+    border: 1px solid var(--color-1-60);
+    width: fit-content;
+    pointer-events: auto;
+    padding: 1rem;
+    background-color: var(--color-1);
+    margin: 0 auto;
+}
+
 #logo {
     font-size: 1rem;
     font-weight: bolder;
     font-family: monospace;
-    border-right: 1px solid #282828;
+    border-right: 1px solid var(--color-1-50);
     padding-right: 1rem;
     margin-right: 1rem;
 }
@@ -218,10 +281,10 @@ nav {
 
 .container {
     border: 1px solid var(--color-1-75);
-    margin: 4.65rem 1rem;
-    border-radius: var(--rounded-sm);
-    overflow: auto;
-    scrollbar-width: none;
+    overflow: hidden;
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 3.7rem;
 }
 
 .entry-wrapper {
@@ -274,4 +337,9 @@ nav {
     pointer-events: none;
     opacity: 0.5;
     filter: saturate(0);
+}
+
+.hidden {
+    display: none;
+    position: absolute;
 }

@@ -1,11 +1,13 @@
-import EntryInput from "./EntryInput.mjs";
-
 const settableTypes = ["string", "number"];
 
 const mainContainer = document.querySelector("#main");
 const tableContainer = document.querySelector("#table-container");
 const newFileButton = document.querySelector("#new-file");
 const openFileButton = document.querySelector("#open-file");
+/**
+ * @type {HTMLDivElement}
+ */
+const valueModal = document.querySelector("#value-modal");
 
 openFileButton?.addEventListener("click", () => {
     const fileInput = document.createElement("input");
@@ -30,15 +32,18 @@ openFileButton?.addEventListener("click", () => {
             tableCaption.textContent = file.name;
 
             const tableBody = document.createElement("tbody");
+            const tableHeadRow = document.createElement("tr");
 
             for (const schemaKey of entriesMap[0]) {
-                const schemaKeyCell = document.createElement("th");
-                schemaKeyCell.scope = "col";
-                schemaKeyCell.textContent = schemaKey[0];
-                tableBody.appendChild(schemaKeyCell);
+                const tableHeadCell = document.createElement("td");
+                tableHeadCell.classList = "col-head";
+                tableHeadCell.scope = "col";
+                tableHeadCell.textContent = schemaKey[0];
+                tableHeadRow.appendChild(tableHeadCell);
             }
 
             tableElement.appendChild(tableCaption);
+            tableBody.appendChild(tableHeadRow);
 
             for (const entryMap of entriesMap) {
                 const entryRow = document.createElement("tr");
@@ -46,7 +51,7 @@ openFileButton?.addEventListener("click", () => {
                 tableBody.appendChild(entryRow);
             }
             tableElement.appendChild(tableBody);
-            if(tableContainer) tableContainer.innerHTML = "";
+            if (tableContainer) tableContainer.innerHTML = "";
             tableContainer?.appendChild(tableElement);
 
             const saveAllButton = document.createElement("button");
@@ -102,6 +107,28 @@ function createCells(entryMap, entryRow) {
         } else if (valueField instanceof Object) {
             valueCell.textContent = valueField.currentValue;
         }
+
+        valueCell.addEventListener("click", (e) => {
+            e.stopPropagation();
+            valueModal.style.display = "block";
+            /*
+            valueModal.style.left = (valueCell.getBoundingClientRect().left - 1).toString();
+            valueModal.style.top = (valueCell.getBoundingClientRect().bottom - 1).toString();
+            valueModal.style.width = (valueCell.getBoundingClientRect().width + 2).toString();
+            */
+
+            /**
+             * 
+             * @param {Event} e 
+             */
+            function externalClose(e) {
+                valueModal.style.display = "none";
+                e.target?.removeEventListener("click", externalClose);
+            }
+
+            mainContainer?.addEventListener("click", externalClose)
+        })
+
         entryRow.appendChild(valueCell);
     }
 }
