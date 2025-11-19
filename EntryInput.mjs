@@ -7,22 +7,25 @@ export default class EntryInput {
         this._cell = cell;
         this._entryObject = this._map.get(this._key);
         /** @type {HTMLInputElement} */
-        this.element = this.render();
+        this.element = document.createElement("input");
+        this.element.type = "text";
+        this.update();
     }
 
-    render() {
-        const input = document.createElement("input");
-        input.type = "text";
+    update() {
         if (!this._cell._modified) {
-            input.value = this._entryObject.currentValue;
+            this.element.value = this._entryObject.currentValue;
         } else {
-            input.value = this._entryObject.newValue;
+            if (this._entryObject.currentValue.length > 0 && this._entryObject.newValue === "") {
+                this._cell._modified = false;
+                this.update();
+            }
+            this.element.value = this._entryObject.newValue;
         }
-        input.onchange = () => {
+        this.element.onchange = () => {
             this._cell._modified = true;
-            this._entryObject.newValue = input.value;
+            this._entryObject.newValue = this.element.value;
             this._cell.update();
         }
-        return input;
     }
 }

@@ -2,6 +2,7 @@ import EntryInput from "./EntryInput.mjs";
 import ValueCell from "./ValueCell.mjs";
 
 const settableTypes = ["string", "number"];
+let savedFile;
 
 const tableContainer = document.querySelector("#table-container");
 const newFileButton = document.querySelector("#new-file");
@@ -26,27 +27,88 @@ openFileButton?.addEventListener("click", () => {
             /**
              * @type {NestMap[]}
              */
-            const entriesMap = mapAllEntries(jsonFile);
+            const entryArray = mapAllEntries(jsonFile);
+            savedFile = entryArray;
 
             const tableElement = document.createElement("table");
+            const tableHeadElement = document.createElement("thead");
             const tableCaption = document.createElement("caption");
 
             tableCaption.textContent = file.name;
 
             const tableHeadRow = document.createElement("tr");
 
-            for (const schemaKey of entriesMap[0]) {
+
+
+            for (const schemaKey of entryArray[0]) {
                 const tableHeadCell = document.createElement("td");
                 tableHeadCell.classList = "col-head";
-                tableHeadCell.scope = "col";
                 tableHeadCell.textContent = schemaKey[0];
                 tableHeadRow.appendChild(tableHeadCell);
             }
 
-            tableElement.appendChild(tableCaption);
+            const utilityButtonWrapper = document.createElement("section");
+            utilityButtonWrapper.classList = "flex gap-sm";
+
+            const saveAllButton = document.createElement("button");
+            saveAllButton.classList = "button primary-button";
+            saveAllButton.textContent = "Save all entries";
+            saveAllButton.onclick = () => {
+                for (const entryMap of entryArray) {
+                    for (const [key, value] of entryMap) {
+                        if (!(value instanceof Map)) {
+                            const newCurrentValue = value.newValue.length > 0 ? value.newValue : value.currentValue;
+                            const newHistory = value.history.length > 0 ? [...value.history, value.currentValue] : [];
+                            const tempObj = {
+                                currentValue: newCurrentValue,
+                                newValue: "",
+                                history: newHistory
+                            }
+                            entryMap.set(key, tempObj);
+                        } else {
+                            console.log("not", value);
+                        }
+                    }
+                }
+            }
+
+            const exportButton = document.createElement("button");
+            exportButton.classList = "button secondary-button";
+            exportButton.textContent = "Export JSON";
+
+            exportButton.onclick = () => {
+                const newEntryArray = [];
+                for (const entryMap of entryArray) {
+                    const newEntryMap = new Map();
+                    for (const [key, value] of entryMap) {
+                        if (!(value instanceof Map)) {
+                            newEntryMap.set(key, value.currentValue);
+                        } else {
+                            console.log("not", value);
+                        }
+                    }
+                    newEntryArray.push(Object.fromEntries(newEntryMap));
+                }
+                const newJsonFile = JSON.stringify(newEntryArray, null, 2);
+                const blob = new Blob([newJsonFile], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = file.name;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+
+            utilityButtonWrapper.appendChild(saveAllButton);
+            utilityButtonWrapper.appendChild(exportButton);
+
+            tableHeadElement.appendChild(tableCaption);
+            tableHeadElement.appendChild(utilityButtonWrapper);
+
+            tableElement.appendChild(tableHeadElement);
             tableBody.appendChild(tableHeadRow);
 
-            for (const entryMap of entriesMap) {
+            for (const entryMap of entryArray) {
                 const entryRow = document.createElement("tr");
                 createCells(entryMap, entryRow);
                 tableBody.appendChild(entryRow);
@@ -55,10 +117,6 @@ openFileButton?.addEventListener("click", () => {
             if (tableContainer) tableContainer.innerHTML = "";
             tableContainer?.appendChild(tableElement);
 
-            const saveAllButton = document.createElement("button");
-            saveAllButton.classList = "button primary-button";
-            saveAllButton.textContent = "Save all entries";
-            newFileButton?.parentElement?.appendChild(saveAllButton);
             if (newFileButton instanceof HTMLButtonElement) newFileButton.disabled = true;
             newFileButton?.classList.add("disabled");
             openFileButton?.remove();
@@ -120,16 +178,13 @@ function createCells(entryMap, entryTableRow) {
             entryTableRow.appendChild(valueCell.element);
 
 
-            valueCell.element.addEventListener("click", (e) => {
+            valueCell.element.onclick = (e) => {
                 e.stopPropagation();
-                const bRect = valueCell.element.getBoundingClientRect();
-                console.log(bRect); 
-                console.log(tableBody.getBoundingClientRect())
+                valueCell._selected = true;
                 if (propertiesPanel) propertiesPanel.innerHTML = "";
                 if (!(valueField instanceof Map)) {
                     if (propertiesPanel instanceof HTMLElement && tableContainer instanceof HTMLElement) {
                         propertiesPanel.style.display = "block";
-                        tableContainer.style.width = "75dvw";
 
                         const valueWrapper = document.createElement("div");
                         valueWrapper.style.display = "flex";
@@ -139,6 +194,7 @@ function createCells(entryMap, entryTableRow) {
                         const valueLabel = document.createElement("label");
                         valueLabel.textContent = valueSet[0];
                         const valueInput = new EntryInput(entryMap, valueSet[0], valueCell);
+                        valueInput.update();
                         valueWrapper.appendChild(valueLabel);
                         valueWrapper.appendChild(valueInput.element);
                         propertiesPanel.appendChild(valueWrapper);
@@ -152,15 +208,16 @@ function createCells(entryMap, entryTableRow) {
                                 propertiesPanel.style.display = "none";
                                 propertiesPanel.innerHTML = "";
                                 tableContainer.style.width = "100%";
+                                valueCell._selected = false;
                                 e.target?.removeEventListener("click", externalClose);
+                                valueCell.update();
                             }
                         }
-                        window?.addEventListener("click", externalClose)
+                        window?.addEventListener("click", externalClose);
                     }
                 }
-
-
-            })
+                valueCell.update();
+            }
         }
     }
 }

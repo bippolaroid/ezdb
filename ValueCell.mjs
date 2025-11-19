@@ -11,13 +11,23 @@ export default class ValueCell {
     update() {
         const { currentValue, newValue } = this._map.get(this._key);
 
-        this.element.textContent = this._modified
-            ? newValue
-            : currentValue;
-    }
+        if (this._selected) {
+            this.element.style.filter = "brightness(200%)";
+        } else {
+            if (this.element.style.filter.length > 0) {
+                this.element.style.filter = "";
+            }
+        }
 
-    render() {
-        this.update();
-        return this.element;
+        if (this._modified) {
+            if (currentValue.length > 0 && newValue === "") {
+                this._modified = false;
+                this.element.textContent = currentValue;
+            } else {
+                this.element.textContent = newValue;
+            }
+        } else {
+            this.element.textContent = currentValue;
+        }
     }
 }
