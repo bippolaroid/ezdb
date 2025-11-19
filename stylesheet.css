@@ -33,6 +33,11 @@ body {
     margin: 0 auto;
     max-height: 100dvh;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    color: var(--color-1-75);
+}
+
+nav {
+    z-index: 100;
 }
 
 a {
@@ -98,26 +103,32 @@ caption {
     color: var(--color-1-100);
 }
 
+table,
+caption,
+thead,
+tbody,
+tr,
+td {
+    width: 100%;
+}
+
+table, thead, tbody, caption {
+    display: block;
+}
+
 table {
     color: white;
     background-color: var(--color-1);
-    width: 100%;
     text-align: center;
     border-collapse: collapse;
-}
-
-thead,
-tbody {
-    display: block;
-    user-select: none;
+    overflow: auto;
 }
 
 tbody {
     overflow-x: auto;
-    max-width: 100dvw;
     scrollbar-width: thin;
     scroll-behavior: smooth;
-    padding-right: 2rem;
+    user-select: none;
 }
 
 td.col-head {
@@ -157,6 +168,8 @@ td:first-child {
     z-index: 1;
 }
 
+/* ID CLASSES */
+
 #main {
     display: flex;
     flex-direction: row;
@@ -168,11 +181,19 @@ td:first-child {
 }
 
 #table-container {
-    max-width: 75dvw;
+    width: 100%;
 }
 
 #properties-panel {
-    max-width: 25dvw;
+    width: 25dvw;
+    padding: 2rem;
+    display: none;
+    background-color: var(--color-1-50);
+    border-left: none;
+}
+
+#property-name {
+    font-size: 1.5rem;
 }
 
 #ui-overlay {
@@ -243,10 +264,6 @@ td:first-child {
 
 }
 
-nav {
-    z-index: 100;
-}
-
 #nav {
     display: flex;
     justify-content: space-between;
@@ -257,6 +274,8 @@ nav {
     background-color: var(--color-1);
     border-bottom: 1px solid var(--color-1-75);
 }
+
+/* GENERAL CLASSES */
 
 .primary-button {
     color: var(--color-1);
@@ -281,7 +300,6 @@ nav {
 
 .container {
     border: 1px solid var(--color-1-75);
-    overflow: hidden;
     width: 100%;
     border-collapse: collapse;
     margin-top: 3.7rem;

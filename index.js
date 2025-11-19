@@ -1,12 +1,15 @@
+import EntryInput from "./EntryInput.mjs";
+import ValueCell from "./ValueCell.mjs";
+
 const settableTypes = ["string", "number"];
 
-const mainContainer = document.querySelector("#main");
 const tableContainer = document.querySelector("#table-container");
 const newFileButton = document.querySelector("#new-file");
 const openFileButton = document.querySelector("#open-file");
 const propertiesPanel = document.querySelector("#properties-panel");
-const propertyValue = document.querySelector("#property-value");
-const valueModal = document.querySelector("#value-modal");
+
+const tableBody = document.createElement("tbody");
+
 
 openFileButton?.addEventListener("click", () => {
     const fileInput = document.createElement("input");
@@ -30,7 +33,6 @@ openFileButton?.addEventListener("click", () => {
 
             tableCaption.textContent = file.name;
 
-            const tableBody = document.createElement("tbody");
             const tableHeadRow = document.createElement("tr");
 
             for (const schemaKey of entriesMap[0]) {
@@ -78,6 +80,11 @@ function mapAllEntries(entries) {
     return entryArray;
 }
 
+/**
+ * 
+ * @param {*} entry 
+ * @param {NestMap} map 
+ */
 function mapEntry(entry, map) {
     for (const key of Object.keys(entry)) {
         if (settableTypes.includes(typeof entry[key]) || settableTypes.includes(typeof entry[key][0])) {
@@ -92,52 +99,68 @@ function mapEntry(entry, map) {
 
 /**
  * 
- * @typedef {Map<string, Object | NestMap>} NestMap
+ * @typedef {Object} ValueObject
+ * @property {string} currentValue
+ * @property {string} newValue
+ * @property {string[]} history
+ * @typedef {Map<string, ValueObject | NestMap>} NestMap
  * @param {NestMap} entryMap 
- * @param {HTMLElement} entryRow 
+ * @param {HTMLElement} entryTableRow 
  */
-function createCells(entryMap, entryRow) {
+function createCells(entryMap, entryTableRow) {
     for (const valueSet of entryMap) {
         const valueField = valueSet[1];
-        const valueCell = document.createElement("td");
+        /**
+         * @type {ValueCell}
+         */
+        let valueCell;
 
-        if (valueField instanceof Map) {
-            valueCell.textContent = "map";
-        } else if (valueField instanceof Object) {
-            valueCell.textContent = valueField.currentValue;
-        }
+        if (!(valueField instanceof Map)) {
+            valueCell = new ValueCell(entryMap, valueSet[0]);
+            entryTableRow.appendChild(valueCell.element);
 
-        valueCell.addEventListener("click", (e) => {
-            e.stopPropagation();
-            valueModal.style.display = "block";
-            propertyValue.value = valueField.currentValue;
 
-            propertyValue?.addEventListener("change", () => {
-                valueField.newValue = propertyValue.value;
-                entryMap.set(valueSet[0], valueField)
-                console.log(valueSet);
-            })
+            valueCell.element.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const bRect = valueCell.element.getBoundingClientRect();
+                console.log(bRect); 
+                console.log(tableBody.getBoundingClientRect())
+                if (propertiesPanel) propertiesPanel.innerHTML = "";
+                if (!(valueField instanceof Map)) {
+                    if (propertiesPanel instanceof HTMLElement && tableContainer instanceof HTMLElement) {
+                        propertiesPanel.style.display = "block";
+                        tableContainer.style.width = "75dvw";
 
-            /*
-            valueModal.style.left = (valueCell.getBoundingClientRect().left - 1).toString();
-            valueModal.style.top = (valueCell.getBoundingClientRect().bottom - 1).toString();
-            valueModal.style.width = (valueCell.getBoundingClientRect().width + 2).toString();
-            */
+                        const valueWrapper = document.createElement("div");
+                        valueWrapper.style.display = "flex";
+                        valueWrapper.style.flexDirection = "column";
+                        valueWrapper.style.gap = "12px";
 
-            /**
-             * 
-             * @param {Event} e 
-             */
-            function externalClose(e) {
-                if(e.target instanceof HTMLElement && !e.target.closest("#properties-panel")) {
-                valueModal.style.display = "none";
-                e.target?.removeEventListener("click", externalClose);
+                        const valueLabel = document.createElement("label");
+                        valueLabel.textContent = valueSet[0];
+                        const valueInput = new EntryInput(entryMap, valueSet[0], valueCell);
+                        valueWrapper.appendChild(valueLabel);
+                        valueWrapper.appendChild(valueInput.element);
+                        propertiesPanel.appendChild(valueWrapper);
+
+                        /**
+                         * 
+                         * @param {Event} e 
+                         */
+                        function externalClose(e) {
+                            if (e.target instanceof HTMLElement && !e.target.closest("#properties-panel") && propertiesPanel instanceof HTMLElement && tableContainer instanceof HTMLElement) {
+                                propertiesPanel.style.display = "none";
+                                propertiesPanel.innerHTML = "";
+                                tableContainer.style.width = "100%";
+                                e.target?.removeEventListener("click", externalClose);
+                            }
+                        }
+                        window?.addEventListener("click", externalClose)
+                    }
                 }
-            }
 
-            window?.addEventListener("click", externalClose)
-        })
 
-        entryRow.appendChild(valueCell);
+            })
+        }
     }
 }
